@@ -38,11 +38,11 @@ default_rem = "github"
 default_rev = "lollipop"
 # set this to the remote that you use for projects from your team repos
 # example fetch="https://github.com/Euphoria-OS"
-default_team_rem = "Euphoria-OS"
+default_team_rem = "Euphoria-OS-Legacy"
 # this shouldn't change unless google makes changes
 local_manifest_dir = ".repo/local_manifests"
 # change this to your name on github (or equivalent hosting)
-android_team = "Euphoria-OS"
+android_team = "Euphoria-OS-Legacy"
 
 
 def check_repo_exists(git_data):
