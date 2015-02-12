@@ -1100,20 +1100,18 @@ def ComputeDifferences(diffs):
 
 
 class BlockDifference:
-  def __init__(self, partition, tgt, src=None, check_first_block=False, version=None, use_lzma=False):
+  def __init__(self, partition, tgt, src=None, check_first_block=False, use_lzma=False):
     self.tgt = tgt
     self.src = src
     self.partition = partition
     self.check_first_block = check_first_block
     self.use_lzma = use_lzma
 
-    if version is None:
-      version = 1
-      if OPTIONS.info_dict:
-        version = max(
-            int(i) for i in
-            OPTIONS.info_dict.get("blockimgdiff_versions", "1").split(","))
-    self.version = version
+    self.version = 1
+    if OPTIONS.info_dict:
+      self.version = max(
+          int(i) for i in
+          OPTIONS.info_dict.get("blockimgdiff_versions", "1").split(","))
 
     b = blockimgdiff.BlockImageDiff(tgt, src, threads=OPTIONS.worker_threads,
                                     version=self.version, use_lzma=use_lzma)
@@ -1139,10 +1137,15 @@ class BlockDifference:
     if not self.src:
       script.Print("Image %s will be patched unconditionally." % (partition,))
     else:
-      script.AppendExtra(('if block_image_verify("%s", '
-                          'package_extract_file("%s.transfer.list"), '
-                          '"%s.new.dat", "%s.patch.dat") then') %
-                         (self.device, partition, partition, partition))
+      if self.version >= 3:
+        script.AppendExtra(('if block_image_verify("%s", '
+                            'package_extract_file("%s.transfer.list"), '
+                            '"%s.new.dat", "%s.patch.dat") then') %
+                           (self.device, partition, partition, partition))
+      else:
+        script.AppendExtra('if range_sha1("%s", "%s") == "%s" then' %
+                            (self.device, self.src.care_map.to_string_raw(),
+                            self.src.TotalSha1()))
       script.Print("Verified %s image..." % (partition,))
       script.AppendExtra('else');
 
