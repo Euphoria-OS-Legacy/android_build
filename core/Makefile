@@ -10,7 +10,6 @@ ifneq ($(BUILD_WITH_COLORS),0)
   CL_MAG="\033[35m"
   CL_CYN="\033[36m"
   CL_RST="\033[0m"
-
 endif
 
 # HACK: clear LOCAL_PATH from including last build target before calling
@@ -1339,6 +1338,11 @@ DISTTOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
 	  $(HOST_OUT_EXECUTABLES)/verity_signer \
 	  $(HOST_OUT_EXECUTABLES)/append2simg \
 	  $(HOST_OUT_EXECUTABLES)/boot_signer
+
+ifneq (,$(filter linux darwin,$(HOST_OS)))
+  DISTTOOLS += $(HOST_OUT_EXECUTABLES)/mkf2fsuserimg.sh \
+	$(HOST_OUT_EXECUTABLES)/make_f2fs
+endif
 
 OTATOOLS := $(DISTTOOLS) \
 	  $(HOST_OUT_EXECUTABLES)/aapt
